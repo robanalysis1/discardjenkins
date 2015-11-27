@@ -1,21 +1,10 @@
 package org.jenkinsci.test.acceptance;
 
-<<<<<<< HEAD
-import javax.inject.Named;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-=======
 import com.cloudbees.sdk.extensibility.ExtensionList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
->>>>>>> b9bb829... Running Jenkins ATH against Selenium Grid using remote-webdriver
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -37,12 +26,6 @@ import org.jenkinsci.test.acceptance.utils.SeleniumGridConnection;
 import org.jenkinsci.test.acceptance.utils.aether.ArtifactResolverUtil;
 import org.jenkinsci.test.acceptance.utils.mail.MailService;
 import org.jenkinsci.test.acceptance.utils.mail.Mailtrap;
-<<<<<<< HEAD
-=======
-import org.jenkinsci.test.acceptance.utils.pluginreporter.ConsoleExercisedPluginReporter;
-import org.jenkinsci.test.acceptance.utils.pluginreporter.ExercisedPluginsReporter;
-import org.jenkinsci.test.acceptance.utils.pluginreporter.TextFileExercisedPluginReporter;
->>>>>>> b9bb829... Running Jenkins ATH against Selenium Grid using remote-webdriver
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriver;
