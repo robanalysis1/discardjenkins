@@ -30,6 +30,13 @@ it's own sandboxed workspace.
 * [Running one test](docs/SINGLE-TEST.md)
 * [Using a http proxy](docs/USING-A-HTTP-PROXY.md)
 * [Prelaunch JUT](docs/PRELAUNCH.md)
+<<<<<<< HEAD
+=======
+* [Obtaining a report of plugins that were exercised](docs/EXERCISEDPLUGINSREPORTER.md)
+* [Testing unreleased plugin](docs/LOCALPLUGIN.md)
+* [Investigation](docs/INVESTIGATION.md)
+* [Running tests against Selenium Grid] (docs/SELENIUM-GRID.md)
+>>>>>>> b9bb829... Running Jenkins ATH against Selenium Grid using remote-webdriver
 * Selecting tests based on plugins they cover (TODO)
 
 ### Writing tests
