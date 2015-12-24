@@ -23,7 +23,12 @@ public class SeleniumGridConnection {
             e.printStackTrace();
         }
         String url = prop.getProperty("gridHubURL");
+        System.out.print("grid URL is :" + url);
         RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(url), cap);
+        String sessionId = remoteWebDriver.getSessionId().toString();
+        System.out.print("___________________________________________________________________________________");
+        System.out.print("_________Session ID is_______________:" + sessionId);
+        System.out.print("___________________________________________________________________________________");
         return remoteWebDriver;
     }
 }
