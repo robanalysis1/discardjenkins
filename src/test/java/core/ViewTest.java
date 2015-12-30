@@ -23,13 +23,13 @@
  */
 package core;
 
-import static org.jenkinsci.test.acceptance.po.View.containsJob;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.ListView;
 import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.jenkinsci.test.acceptance.po.View.containsJob;
 
 public class ViewTest extends AbstractJUnitTest {
 
@@ -50,15 +50,15 @@ public class ViewTest extends AbstractJUnitTest {
 
         assertThat(view, containsJob(job));
     }
-
-    @Test
-    public void findJobThroughRegexp() {
-        FreeStyleJob job = jenkins.jobs.create(FreeStyleJob.class, "my_name");
-        ListView view = jenkins.views.create(ListView.class, "a_view");
-        view.configure();
-        view.check("Use a regular expression to include jobs into the view");
-        fillIn("includeRegex", "my.*");
-        view.save();
-        assertThat(view, containsJob(job));
-    }
+//
+//    @Test
+//    public void findJobThroughRegexp() {
+//        FreeStyleJob job = jenkins.jobs.create(FreeStyleJob.class, "my_name");
+//        ListView view = jenkins.views.create(ListView.class, "a_view");
+//        view.configure();
+//        view.check("Use a regular expression to include jobs into the view");
+//        fillIn("includeRegex", "my.*");
+//        view.save();
+//        assertThat(view, containsJob(job));
+//    }
 }

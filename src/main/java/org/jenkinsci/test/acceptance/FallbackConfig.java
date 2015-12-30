@@ -136,8 +136,8 @@ public class FallbackConfig extends AbstractModule {
                 cap.setCapability("browser", "PHANTOMJS_198_MACOS_10.11_64");
                 cap.setCapability("apikey", "c717c5b3-a307-461e-84ea-1232d44cde89");
                 cap.setCapability("email", "test@testfabrik.com");
-                cap.setCapability("record", false);
-                cap.setCapability("extract", false);
+                cap.setCapability("record", true);
+                cap.setCapability("extract", true);
 
                 return new SeleniumGridConnection().createWebDriver(cap);
 

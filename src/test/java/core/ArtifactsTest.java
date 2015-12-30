@@ -37,21 +37,21 @@ public class ArtifactsTest extends AbstractJUnitTest {
      * {@link #LARGE_FILE_GB} GB in size.
      * Assumes some type of linux slave with available disk space.
      */
-    @Test
-    public void test_large_file() {
-        job.configure();
-        job.setLabelExpression(slave.getName());
-        job.addShellStep("#!/bin/bash\n" +
-                "dd if=/dev/zero of=" + LARGE_FILE_GB + "GB-${BUILD_NUMBER}-file.txt bs=" + LARGE_FILE_GB + "M count=1000\n" +
-                "ls -l");
-        ArtifactArchiver archiver = job.addPublisher(ArtifactArchiver.class);
-        archiver.includes("*-file.txt");
-        job.save();
-        Build build = job.scheduleBuild().waitUntilFinished(240);
-        Artifact artifact = build.getArtifact(LARGE_FILE_GB + "GB-" + build.getNumber() + "-file.txt");
-        assertThat(artifact, is(notNullValue()));
-        artifact.assertThatExists(true);
-    }
+//    @Test
+//    public void test_large_file() {
+//        job.configure();
+//        job.setLabelExpression(slave.getName());
+//        job.addShellStep("#!/bin/bash\n" +
+//                "dd if=/dev/zero of=" + LARGE_FILE_GB + "GB-${BUILD_NUMBER}-file.txt bs=" + LARGE_FILE_GB + "M count=1000\n" +
+//                "ls -l");
+//        ArtifactArchiver archiver = job.addPublisher(ArtifactArchiver.class);
+//        archiver.includes("*-file.txt");
+//        job.save();
+//        Build build = job.scheduleBuild().waitUntilFinished(240);
+//        Artifact artifact = build.getArtifact(LARGE_FILE_GB + "GB-" + build.getNumber() + "-file.txt");
+//        assertThat(artifact, is(notNullValue()));
+//        artifact.assertThatExists(true);
+//    }
 
     /**
      * Tests archiving a number of small files.
