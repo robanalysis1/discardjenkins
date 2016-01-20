@@ -33,6 +33,7 @@ public class SeleniumGridConnection {
         RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(url), cap);
         String sessionId = remoteWebDriver.getSessionId().toString();
         // Saving browser sessionID to mysql database
+        System.out.print("Session ID is:" + sessionId);
 
         String dburl = "jdbc:mysql://localhost:3306/jenkins_core_sessionIDs";
         String uname = "root";
