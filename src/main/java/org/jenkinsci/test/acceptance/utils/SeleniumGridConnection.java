@@ -30,9 +30,9 @@ public class SeleniumGridConnection {
             e.printStackTrace();
         }
         String url = prop.getProperty("gridHubURL");
-        System.out.print("grid URL is :" + url);
         RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(url), cap);
         String sessionId = remoteWebDriver.getSessionId().toString();
+        System.out.print("_________Session ID is_______________:" + sessionId);
         // Saving browser sessionID to mysql database
 
         String dburl = "jdbc:mysql://localhost:3306/jenkins_core_sessionIDs";
