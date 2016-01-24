@@ -27,6 +27,8 @@ package org.jenkinsci.test.acceptance.utils.aether;
 import java.io.File;
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -58,19 +60,10 @@ public class ArtifactResolverUtil {
     private RepositorySystem repoSystem;
     private RepositorySystemSession repoSystemSession;
 
+    @Inject
     public ArtifactResolverUtil(RepositorySystem rs, RepositorySystemSession rss) {
         repoSystem = rs;
         repoSystemSession = rss;
-    }
-
-    /**
-     * @param gav The "groupId artifactId version" to be resolved
-     * @param version The version of the artifact you want to resolve
-     *
-     * @return artifact resolution result
-     */
-    public ArtifactResult resolve(String gav, String version) {
-        return resolve(makeArtifact(gav, version));
     }
 
     /**
@@ -118,17 +111,6 @@ public class ArtifactResolverUtil {
         return r;
     }
 
-    private DefaultArtifact makeArtifact(String gav, String version) {
-        String[] t = gav.split(":");
-        String gavVersion;
-        if (version == null) {
-            gavVersion = t[2];
-        } else {
-            gavVersion = version;
-        }
-        return new DefaultArtifact(t[0], t[1], "hpi", gavVersion);
-    }
-
     /**
      * Converts Maven Proxy to Aether Proxy
      *
@@ -145,5 +127,4 @@ public class ArtifactResolverUtil {
         }
         return new Proxy(proxy.getProtocol(), proxy.getHost(), proxy.getPort(), auth);
     }
-
 }

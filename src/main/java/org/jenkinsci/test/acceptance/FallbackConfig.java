@@ -4,11 +4,13 @@ import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -46,6 +48,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
@@ -123,6 +126,14 @@ public class FallbackConfig extends AbstractModule {
             capabilities.setCapability(LANGUAGE_SELECTOR, "en");
             capabilities.setCapability(LANGUAGE_SELECTOR_PHANTOMJS, "en");
             return new PhantomJSDriver(capabilities);
+        case "remote-webdriver-firefox":
+            String u = System.getenv("REMOTE_WEBDRIVER_URL");
+            if (StringUtils.isBlank(u)) {
+                throw new Error("remote-webdriver-firefox requires REMOTE_WEBDRIVER_URL to be set");
+            }
+            return new RemoteWebDriver(
+                    new URL(u), //http://192.168.99.100:4444/wd/hub
+                    DesiredCapabilities.firefox());
 
         default:
             throw new Error("Unrecognized browser type: "+browser);
@@ -230,7 +241,7 @@ public class FallbackConfig extends AbstractModule {
     @Provides @Named("jenkins.war")
     public File getJenkinsWar(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession) {
         try {
-            return IOUtil.firstExisting(false, System.getenv("JENKINS_WAR"), getWorkspace() + "/jenkins.war", "./jenkins.war");
+            return IOUtil.firstExisting(false, System.getenv("JENKINS_WAR"));
         } catch (IOException ex) {
             // Fall-through
         }
@@ -243,6 +254,13 @@ public class FallbackConfig extends AbstractModule {
         }
 
         // TODO add support for 'lts', 'lts-rc', 'latest' and 'latest-rc'
+
+        try {
+            // Lowest priority of all
+            return IOUtil.firstExisting(false, getWorkspace() + "/jenkins.war", "./jenkins.war");
+        } catch (IOException ex) {
+            // Fall-through
+        }
 
         throw new Error("Could not find jenkins.war, use JENKINS_WAR or JENKINS_VERSION to specify it.");
     }

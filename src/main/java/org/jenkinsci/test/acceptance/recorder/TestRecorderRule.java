@@ -17,6 +17,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsConfiguration;
 import java.awt.Dimension;
 import java.awt.AWTException;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +32,6 @@ public class TestRecorderRule extends TestWatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(TestRecorderRule.class);
 
-    private static final int MAX_RECORDING_TIME_SECS = 120000;
     private static final int FRAME_RATE_PER_SEC = 60;
     private static final int BIT_DEPTH = 16;
     private static final float QUALITY_RATIO = 0.97f;
@@ -46,6 +46,7 @@ public class TestRecorderRule extends TestWatcher {
     static String RECORDER_OPTION = SystemEnvironmentVariables
             .getPropertyVariableOrEnvironment("RECORDER", DEFAULT_MODE).trim();
 
+    private boolean headless = false;
     private FailureDiagnostics diagnostics;
     private JUnitScreenRecorder screenRecorder;
 
@@ -62,29 +63,33 @@ public class TestRecorderRule extends TestWatcher {
     }
 
     private void startRecording(Description des) {
-        GraphicsConfiguration gc = GraphicsEnvironment
-                .getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice()
-                .getDefaultConfiguration();
-
-        String mimeType = FormatKeys.MIME_QUICKTIME;
-        String videoFormatName = VideoFormatKeys.ENCODING_QUICKTIME_ANIMATION;
-        String compressorName = VideoFormatKeys.COMPRESSOR_NAME_QUICKTIME_ANIMATION;
-        Dimension outputDimension = gc.getBounds().getSize();
-        int bitDepth = BIT_DEPTH;
-        float quality = QUALITY_RATIO;
-        int screenRate = FRAME_RATE_PER_SEC;
-        long maxRecordingTime = MAX_RECORDING_TIME_SECS;
-
-        Format outputFormatForScreenCapture = getOutputFormatForScreenCapture(videoFormatName,
-                compressorName, outputDimension,
-                bitDepth, quality, screenRate);
-
         try {
+            GraphicsConfiguration gc = GraphicsEnvironment
+                    .getLocalGraphicsEnvironment()
+                    .getDefaultScreenDevice()
+                    .getDefaultConfiguration();
+
+            String mimeType = FormatKeys.MIME_QUICKTIME;
+            String videoFormatName = VideoFormatKeys.ENCODING_QUICKTIME_ANIMATION;
+            String compressorName = VideoFormatKeys.COMPRESSOR_NAME_QUICKTIME_ANIMATION;
+            Dimension outputDimension = gc.getBounds().getSize();
+            int bitDepth = BIT_DEPTH;
+            float quality = QUALITY_RATIO;
+            int screenRate = FRAME_RATE_PER_SEC;
+
+            Format outputFormatForScreenCapture = getOutputFormatForScreenCapture(videoFormatName,
+                    compressorName, outputDimension,
+                    bitDepth, quality, screenRate);
+
             this.screenRecorder = new JUnitScreenRecorder
                     (gc, gc.getBounds(), getFileFormat(mimeType),
                             outputFormatForScreenCapture, null, null, diagnostics);
             this.screenRecorder.start();
+        } catch (HeadlessException e) {
+            logger.warn("Test recorder does not work with Headless mode");
+            this.headless = true;
+        } catch (UnsupportedOperationException e) {
+            logger.warn("Exception starting test recording {}", e);
         } catch (IOException e) {
             logger.warn("Exception starting test recording {}", e);
         } catch (AWTException e) {
@@ -94,7 +99,7 @@ public class TestRecorderRule extends TestWatcher {
 
     @Override
     protected void succeeded(Description description) {
-        if (this.screenRecorder != null) {
+        if (this.screenRecorder != null && !this.headless) {
             if (saveAllExecutions()) {
                 stopRecordingWithFinalWaiting();
             } else {
@@ -126,7 +131,7 @@ public class TestRecorderRule extends TestWatcher {
     }
 
     private void stopRecording(boolean waitTime) {
-        if (this.screenRecorder != null && this.screenRecorder.getState() == ScreenRecorder.State.RECORDING) {
+        if (this.screenRecorder != null && !this.headless && this.screenRecorder.getState() == ScreenRecorder.State.RECORDING) {
             try {
                 if (waitTime) {
                     waitUntilLastFramesAreRecorded();

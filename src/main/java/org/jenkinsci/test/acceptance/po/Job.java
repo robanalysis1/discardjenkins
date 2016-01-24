@@ -278,7 +278,9 @@ public class Job extends TopLevelItem {
     public <T extends Parameter> T addParameter(Class<T> type) {
         ensureConfigPage();
 
-        check(find(by.xpath("//input[@name='parameterized']")));
+        control("/properties/hudson-model-ParametersDefinitionProperty/specified",
+                "/properties/hudson-model-ParametersDefinitionProperty/parameterized" // 1.636-
+        ).check();
 
         control(by.xpath("//button[text()='Add Parameter']")).selectDropdownMenu(type);
 
@@ -287,7 +289,8 @@ public class Job extends TopLevelItem {
 
         elasticSleep(500);
 
-        String path = last(by.xpath("//div[@name='parameter']")).getAttribute("path");
+        // 1.636-: …/parameter (or …/parameter[1] etc.); 1.637+: …/parameterDefinitions
+        String path = last(by.xpath("//div[starts-with(@path,'/properties/hudson-model-ParametersDefinitionProperty/parameter')]")).getAttribute("path");
 
         T p = newInstance(type, this, path);
         parameters.add(p);

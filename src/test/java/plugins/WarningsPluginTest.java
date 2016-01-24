@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.jenkinsci.test.acceptance.junit.SmokeTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.plugins.analysis_core.AnalysisConfigurator;
@@ -111,6 +110,11 @@ public class WarningsPluginTest extends AbstractAnalysisTest<WarningsAction> {
             assertThat(driver, hasContent(title + ": " + warningsPerAxis.get(axis.name)));
         }
 
+        // sometimes the details is not refreshed yet (https://issues.jenkins-ci.org/browse/JENKINS-31431) 
+        // so let's add an sleep and a refresh 
+
+        sleep(1000);
+        driver.navigate().refresh();
         assertThatConfigurationTabIsCorrectlyFilled(job);
         assertThatFoldersTabIsCorrectlyFilled(job);
         assertThatFilesTabIsCorrectlyFilled(job);
@@ -173,7 +177,7 @@ public class WarningsPluginTest extends AbstractAnalysisTest<WarningsAction> {
 
         buildFailingJob(job);
 
-        verifyReceivedMail("Warnings: FAILURE", "Warnings: 147-7-8");
+        verifyReceivedMail("Warnings: FAILURE", "Warnings: 142-12-8");
     }
 
     private FreeStyleJob createFreeStyleJob(final AnalysisConfigurator<WarningsBuildSettings> buildConfigurator) {
