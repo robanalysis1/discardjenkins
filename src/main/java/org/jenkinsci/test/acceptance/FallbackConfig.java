@@ -1,14 +1,9 @@
 package org.jenkinsci.test.acceptance;
 
-import javax.inject.Named;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.cloudbees.sdk.extensibility.ExtensionList;
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -28,12 +23,13 @@ import org.jenkinsci.test.acceptance.slave.SlaveProvider;
 import org.jenkinsci.test.acceptance.utils.ElasticTime;
 import org.jenkinsci.test.acceptance.utils.IOUtil;
 import org.jenkinsci.test.acceptance.utils.SauceLabsConnection;
+import org.jenkinsci.test.acceptance.utils.SeleniumGridConnection;
 import org.jenkinsci.test.acceptance.utils.aether.ArtifactResolverUtil;
 import org.jenkinsci.test.acceptance.utils.mail.MailService;
 import org.jenkinsci.test.acceptance.utils.mail.Mailtrap;
+import org.jenkinsci.test.acceptance.utils.pluginreporter.ConsoleExercisedPluginReporter;
 import org.jenkinsci.test.acceptance.utils.pluginreporter.ExercisedPluginsReporter;
 import org.jenkinsci.test.acceptance.utils.pluginreporter.TextFileExercisedPluginReporter;
-import org.jenkinsci.test.acceptance.utils.pluginreporter.ConsoleExercisedPluginReporter;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.UnsupportedCommandException;
@@ -49,10 +45,13 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
-import com.cloudbees.sdk.extensibility.ExtensionList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
+import javax.inject.Named;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The default configuration for running tests.
@@ -123,8 +122,16 @@ public class FallbackConfig extends AbstractModule {
             capabilities.setCapability(LANGUAGE_SELECTOR, "en");
             capabilities.setCapability(LANGUAGE_SELECTOR_PHANTOMJS, "en");
             return new PhantomJSDriver(capabilities);
+        case "seleniumgrid":
+            DesiredCapabilities cap = new DesiredCapabilities();
+            cap.setCapability("browser", "FIREFOX_30_WINDOWS_8_64");
+            cap.setCapability("apikey", "c717c5b3-a307-461e-84ea-1232d44cde89");
+            cap.setCapability("email", "test@testfabrik.com");
+            cap.setCapability("record", true);
+            cap.setCapability("extract", true);
+            return new SeleniumGridConnection().createWebDriver(cap);
 
-        default:
+            default:
             throw new Error("Unrecognized browser type: "+browser);
         }
     }
